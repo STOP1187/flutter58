@@ -33,7 +33,8 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   final _phoneFocus = FocusNode();
   final _passFocus = FocusNode();
 
-  User newUser = User();
+  User newUser = const User(name: '', phone: '', email: '', country: '', story: '');
+
 
   @override
   void dispose() {
@@ -99,7 +100,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 ),
               ),
               validator: _validateName,
-              onSaved: (value) => newUser.name = value!,
+              onSaved: (value) => newUser = newUser.copyWith(name: value),
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -140,7 +141,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               validator: (value) => _validatePhoneNumber(value!)
                   ? null
                   : 'Phone number must be entered as (###)###-####',
-              onSaved: (value) => newUser.phone = value!,
+              onSaved: (value) => newUser = newUser.copyWith(phone: value),
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -152,7 +153,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               ),
               keyboardType: TextInputType.emailAddress,
               // validator: _validateEmail,
-              onSaved: (value) => newUser.email = value!,
+              onSaved: (value) => newUser = newUser.copyWith(email: value),
             ),
             const SizedBox(height: 10),
             DropdownButtonFormField(
@@ -170,7 +171,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
                 print(country);
                 setState(() {
                   _selectedCountry = country as String;
-                  newUser.country = country;
+                  newUser = newUser.copyWith(country: country);
                 });
               },
               value: _selectedCountry,
@@ -191,7 +192,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
               inputFormatters: [
                 LengthLimitingTextInputFormatter(100),
               ],
-              onSaved: (value) => newUser.story = value!,
+              onSaved: (value) => newUser = newUser.copyWith(story: value),
             ),
             const SizedBox(height: 10),
             TextFormField(
@@ -246,7 +247,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
   void _submitForm() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
-      _showDialog(name: _nameController.text);
+      _showDialog();
       log('Name: ${_nameController.text}');
       log('Phone: ${_phoneController.text}');
       log('Email: ${_emailController.text}');
@@ -325,7 +326,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
     // );
   }
 
-  void _showDialog({required String name}) {
+  void _showDialog() {
     showDialog(
       context: context,
       builder: (context) {
@@ -337,7 +338,7 @@ class _RegisterFormPageState extends State<RegisterFormPage> {
             ),
           ),
           content: Text(
-            '$name is now a verified register form',
+            '${newUser.name} is now a verified register form',
             style: const TextStyle(
               fontWeight: FontWeight.w700,
               fontSize: 18.0,
